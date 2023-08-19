@@ -1,6 +1,7 @@
+import { Todo } from "@/features/todo/type";
 import { NextRequest, NextResponse } from "next/server";
 
-export let todos = [
+export let todos: Todo[] = [
   {
     id: "sdf",
     todo: "Todo 1",
@@ -23,6 +24,12 @@ export let todos = [
 
 export const removeTodo = (id: string) => {
   todos = todos.filter((todo) => todo.id !== id);
+};
+
+export const updateTodo = (id: string, { todo, isCompleted }: Todo) => {
+  todos = todos.map((item) =>
+    item.id === id ? { ...item, todo, isCompleted } : item
+  );
 };
 
 export async function GET(request: NextRequest) {

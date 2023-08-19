@@ -5,12 +5,14 @@ import Input from "./Input";
 import TodoItemList from "./ItemList";
 
 import { useAddTodo, useRemoveTodo, useTodos } from "../services/todo";
+import { Todo } from "../type";
 
 type Props = {};
 
 const TodoList = (props: Props) => {
   const { todos, addTodo, removeTodo } = useTodoList();
   const { inputValue, setInputValue } = useTodoInput();
+  const [editing, setEditing] = useState<Todo | null>(null);
 
   return (
     <div>
@@ -21,6 +23,7 @@ const TodoList = (props: Props) => {
         }}
         onEdit={(item) => {
           setInputValue(item.todo);
+          setEditing(item);
         }}
         items={todos}
       />
@@ -30,8 +33,14 @@ const TodoList = (props: Props) => {
           setInputValue(e.target.value);
         }}
         onEnter={() => {
-          addTodo(inputValue);
+          if (editing) {
+            addTodo(inputValue);
+          } else {
+            addTodo(inputValue);
+          }
+
           setInputValue("");
+          return;
         }}
       />
     </div>
