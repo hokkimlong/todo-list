@@ -34,9 +34,10 @@ const TodoList = () => {
         onMarkChange={handleMarkChange}
         items={todos}
       />
-
+      <p>{mutating && "Saving ..."}</p>
       {editingTodo && `Editing : ${editingTodo.todo}`}
       <Input
+        disabled={mutating}
         value={inputValue}
         onChange={(e) => {
           setInputValue(e.target.value);
