@@ -2,8 +2,8 @@ import { Todo } from "@/features/todo/type";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
-  process.env.SUPABASE_URL as string,
-  process.env.SUPABASE_ANON_KEY as string,
+  "https://erfhbbmkzrnnamkbfuuw.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVyZmhiYm1renJubmFta2JmdXV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTI1NDgyNjIsImV4cCI6MjAwODEyNDI2Mn0.1muUiYBRfmSkhXnYfEnOfnzpMYIxXbYpTdt6-rsd620",
   {
     auth: {
       persistSession: false, //or true
