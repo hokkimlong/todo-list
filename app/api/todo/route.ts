@@ -1,43 +1,19 @@
 import { Todo } from "@/features/todo/type";
 import { NextRequest, NextResponse } from "next/server";
-
-export let todos: Todo[] = [
-  {
-    id: "sdf",
-    todo: "Todo 1",
-    isCompleted: false,
-    createdAt: new Date(),
-  },
-  {
-    id: "dfsd",
-    todo: "Todo 2",
-    isCompleted: false,
-    createdAt: new Date(),
-  },
-  {
-    id: "dsfd",
-    todo: "Todo 2",
-    isCompleted: false,
-    createdAt: new Date(),
-  },
-];
-
-export const removeTodo = (id: string) => {
-  todos = todos.filter((todo) => todo.id !== id);
-};
-
-export const updateTodo = (id: string, { todo, isCompleted }: Todo) => {
-  todos = todos.map((item) =>
-    item.id === id ? { ...item, todo, isCompleted } : item
-  );
-};
+import todoService from "./service";
 
 export async function GET(request: NextRequest) {
+  const search = request.nextUrl.searchParams.get("search");
+  const todos = await todoService.getTodos({ search });
   return NextResponse.json(todos, { status: 200 });
 }
 
 export async function POST(request: NextRequest) {
-  const body = await request.json();
-  todos.push(body);
-  return NextResponse.json(todos, { status: 200 });
+  const body: Todo = await request.json();
+  const foundTodo = await todoService.getTodo({ todo: body.todo });
+  if (foundTodo) {
+    return NextResponse.json(body, { status: 409 });
+  }
+  await todoService.createNewTodo(body);
+  return NextResponse.json(null, { status: 200 });
 }

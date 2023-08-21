@@ -1,74 +1,62 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios, { Method } from "axios";
-import { nanoid } from "nanoid";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import axios, { GenericAbortSignal, Method } from "axios";
+import { useDebounce } from "@uidotdev/usehooks";
 
 const fetcher = (
   url: string,
-  { method, data }: { method: Method; data?: any }
+  {
+    method,
+    data,
+    params,
+    signal,
+  }: {
+    method: Method;
+    data?: any;
+    params?: any;
+    signal?: GenericAbortSignal;
+  }
 ) =>
   axios({
     url,
     method,
     baseURL: "http://localhost:3000/api",
     data,
+    params,
+    signal,
   }).then((res) => res.data);
 
 const TODO_QUERY_KEY = "todo";
 
-export const useTodos = () => {
-  const { data, error, isLoading } = useQuery([TODO_QUERY_KEY], () =>
-    fetcher("todo", { method: "GET" })
-  );
-
-  return {
-    todos: data,
-    isLoading,
-    isError: error,
-  };
-};
-
-const generateId = () => nanoid();
-
-export const useAddTodo = () => {
-  const queryClient = useQueryClient();
-  const { mutate } = useMutation(
-    (todo: string) =>
-      fetcher("todo", {
-        method: "POST",
-        data: {
-          id: generateId(),
-          todo,
-          isCompleted: false,
-          createdAt: new Date(),
-        },
-      }),
+export const useTodos = (query?: { search?: string }) => {
+  const debounceQuery = useDebounce(query, 300);
+  return useQuery(
+    [TODO_QUERY_KEY, debounceQuery],
+    ({ signal }) =>
+      fetcher("todo", { method: "GET", params: debounceQuery, signal }),
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries([TODO_QUERY_KEY]);
-      },
+      keepPreviousData: true,
     }
   );
-
-  return {
-    addTodo: mutate,
-  };
 };
 
-export const useRemoveTodo = () => {
-  const queryClient = useQueryClient();
-  const { mutate } = useMutation(
-    (todoId: string) =>
-      fetcher(`todo/${todoId}`, {
-        method: "DELETE",
-      }),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries([TODO_QUERY_KEY]);
-      },
-    }
-  );
+export const addTodo = (todo: string) =>
+  fetcher("todo", {
+    method: "POST",
+    data: {
+      todo,
+      isCompleted: false,
+    },
+  });
 
-  return {
-    removeTodo: mutate,
-  };
-};
+export const removeTodo = (todoId: number) =>
+  fetcher(`todo/${todoId}`, {
+    method: "DELETE",
+  });
+
+export const updateTodo = (
+  todo: { id: number } & ({ todo: string } | { isCompleted: boolean })
+) =>
+  fetcher(`todo/${todo.id}`, {
+    method: "PUT",
+    data: todo,
+  });

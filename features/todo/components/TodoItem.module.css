@@ -1,0 +1,14 @@
+.TodoItem {
+  padding: 10px;
+  height: 12px;
+}
+
+.TodoItem button {
+  display: none;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.TodoItem:hover button {
+  display: inline-block;
+}

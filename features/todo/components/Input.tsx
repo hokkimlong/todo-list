@@ -1,19 +1,21 @@
 import React, { KeyboardEventHandler } from "react";
 
 type Props = {
-  onEnter?: KeyboardEventHandler<HTMLInputElement>;
+  onPressEnter?: KeyboardEventHandler<HTMLInputElement>;
 } & React.InputHTMLAttributes<HTMLInputElement>;
 
-const Input = ({ onEnter, ...props }: Props) => {
+const Input = ({ onPressEnter, ...props }: Props) => {
   return (
-    <input
-      onKeyDown={(e) => {
-        if (e.key === "Enter" && onEnter) {
-          onEnter(e);
-        }
-      }}
-      {...props}
-    />
+    <div>
+      <input
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && onPressEnter) {
+            onPressEnter(e);
+          }
+        }}
+        {...props}
+      />
+    </div>
   );
 };
 
