@@ -19,7 +19,7 @@ const fetcher = (
   axios({
     url,
     method,
-    baseURL: "http://localhost:3000/api",
+    baseURL: `${window.location.origin}/api`,
     data,
     params,
     signal,
